@@ -1,0 +1,18 @@
+{
+  "name" : "Kie",
+  "variableSets" : {
+    "default" : { }
+  },
+  "variableXpaths" : {
+    "/adapter/channel-list/channel[unique-id=\"socket-to-fs\"]/workflow-list/standard-workflow[unique-id=\"socket-to-fs\"]/producer/base-directory-url" : "${fsDir}",
+    "/adapter/channel-list/channel[unique-id=\"kie-to-fs\"]/workflow-list/standard-workflow[unique-id=\"kie-to-fs\"]/service-collection/services/kie-service[unique-id=\"kie-service\"]/connection/rule[1]" : "${rulesDir}/choose-computer.drl"
+  },
+  "uidInXincludeCompntListFileName" : false,
+  "xincludeXpaths" : { },
+  "additionalFiles" : {
+    "bootstrap.properties" : "bootstrap.properties",
+    "log4j2.xml" : "log4j2.xml"
+  },
+  "optionalComponentsInUse" : [ "com.adaptris:interlok-kie:4.0-SNAPSHOT" ],
+  "structured" : true
+}

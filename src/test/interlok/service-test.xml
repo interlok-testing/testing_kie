@@ -1,0 +1,270 @@
+<service-test>
+  <unique-id>evil-khorana</unique-id>
+  <test-client class="embedded-jmx-test-client"/>
+  <helpers/>
+  <test-list>
+    <unique-id>kie-to-fs</unique-id>
+    <test>
+      <unique-id>create-person-message@kie-to-fs</unique-id>
+      <test-case>
+        <unique-id>assert-payload-correct</unique-id>
+        <input-message-provider>
+          <metadata-provider class="empty-metadata-provider"/>
+          <payload-provider class="empty-payload-provider"/>
+        </input-message-provider>
+        <assertions>
+          <assert-payload-contains>
+            <payload><![CDATA[<com.adaptris.kie.model.Person>]]></payload>
+          </assert-payload-contains>
+        </assertions>
+      </test-case>
+      <service-to-test>
+        <source class="file-source">
+          <file>file:///${service.tester.working.directory}/src/main/interlok/config/adapter.xml</file>
+        </source>
+        <preprocessors>
+          <service-unique-id-preprocessor>
+            <channel>kie-to-fs</channel>
+            <workflow>kie-to-fs</workflow>
+            <service>create-person-message</service>
+          </service-unique-id-preprocessor>
+        </preprocessors>
+      </service-to-test>
+    </test>
+    <test>
+      <unique-id>payload-to-metadata@kie-to-fs</unique-id>
+      <test-case>
+        <unique-id>assert-metadata-correct</unique-id>
+        <input-message-provider>
+          <metadata-provider class="empty-metadata-provider"/>
+          <payload-provider class="inline-payload-provider">
+            <payload><![CDATA[<com.adaptris.kie.model.Person>
+  <profession>manager</profession>
+  <hobbies>
+    <string>travelling</string>
+  </hobbies>
+</com.adaptris.kie.model.Person>]]></payload>
+          </payload-provider>
+        </input-message-provider>
+        <assertions>
+          <assert-metadata-matches-regex>
+            <metadata>
+              <key-value-pair>
+                <key>person</key>
+                <value>&lt;com.adaptris.kie.model.Person&gt;\s*&lt;profession&gt;manager&lt;/profession&gt;\s*&lt;hobbies&gt;\s*&lt;string&gt;travelling&lt;/string&gt;\s*&lt;/hobbies&gt;\s*&lt;/com.adaptris.kie.model.Person&gt;</value>
+              </key-value-pair>
+            </metadata>
+          </assert-metadata-matches-regex>
+        </assertions>
+      </test-case>
+      <service-to-test>
+        <source class="file-source">
+          <file>file:///${service.tester.working.directory}/src/main/interlok/config/adapter.xml</file>
+        </source>
+        <preprocessors>
+          <service-unique-id-preprocessor>
+            <channel>kie-to-fs</channel>
+            <workflow>kie-to-fs</workflow>
+            <service>payload-to-metadata</service>
+          </service-unique-id-preprocessor>
+        </preprocessors>
+      </service-to-test>
+    </test>
+<!-- The test kie-service@kie-to-fs only works via the UI, when running gradlew clean build the rules file cannot be found -->
+<!--     <test> -->
+<!--       <unique-id>kie-service@kie-to-fs</unique-id> -->
+<!--       <test-case> -->
+<!--         <unique-id>assert-return-laptop-windows</unique-id> -->
+<!--         <input-message-provider> -->
+<!--           <metadata-provider class="empty-metadata-provider"/> -->
+<!--           <payload-provider class="inline-payload-provider"> -->
+<!--             <payload><![CDATA[<com.adaptris.kie.model.Person> -->
+<!--   <profession>manager</profession> -->
+<!--   <hobbies> -->
+<!--     <string>travelling</string> -->
+<!--   </hobbies> -->
+<!-- </com.adaptris.kie.model.Person>]]></payload> -->
+<!--           </payload-provider> -->
+<!--         </input-message-provider> -->
+<!--         <assertions> -->
+<!--           <assert-payload-equals> -->
+<!--             <payload><![CDATA[<laptop> -->
+<!--   <operating-system>Windows</operating-system> -->
+<!--   <ram>8192</ram> -->
+<!-- </laptop>]]></payload> -->
+<!--           </assert-payload-equals> -->
+<!--         </assertions> -->
+<!--       </test-case> -->
+<!--       <test-case> -->
+<!--         <unique-id>assert-return-laptop-linux</unique-id> -->
+<!--         <input-message-provider> -->
+<!--           <metadata-provider class="empty-metadata-provider"/> -->
+<!--           <payload-provider class="inline-payload-provider"> -->
+<!--             <payload><![CDATA[<com.adaptris.kie.model.Person> -->
+<!--   <profession>developer</profession> -->
+<!--   <hobbies> -->
+<!--     <string>travelling</string> -->
+<!--   </hobbies> -->
+<!-- </com.adaptris.kie.model.Person>]]></payload> -->
+<!--           </payload-provider> -->
+<!--         </input-message-provider> -->
+<!--         <assertions> -->
+<!--           <assert-payload-equals> -->
+<!--             <payload><![CDATA[<laptop> -->
+<!--   <operating-system>Linux</operating-system> -->
+<!--   <ram>8192</ram> -->
+<!-- </laptop>]]></payload> -->
+<!--           </assert-payload-equals> -->
+<!--         </assertions> -->
+<!--       </test-case> -->
+<!--       <test-case> -->
+<!--         <unique-id>assert-return-laptop-mac</unique-id> -->
+<!--         <input-message-provider> -->
+<!--           <metadata-provider class="empty-metadata-provider"/> -->
+<!--           <payload-provider class="inline-payload-provider"> -->
+<!--             <payload><![CDATA[<com.adaptris.kie.model.Person> -->
+<!--   <profession>hipster</profession> -->
+<!--   <hobbies> -->
+<!--     <string>travelling</string> -->
+<!--   </hobbies> -->
+<!-- </com.adaptris.kie.model.Person>]]></payload> -->
+<!--           </payload-provider> -->
+<!--         </input-message-provider> -->
+<!--         <assertions> -->
+<!--           <assert-payload-equals> -->
+<!--             <payload><![CDATA[<laptop> -->
+<!--   <operating-system>Mac</operating-system> -->
+<!--   <ram>8192</ram> -->
+<!-- </laptop>]]></payload> -->
+<!--           </assert-payload-equals> -->
+<!--         </assertions> -->
+<!--       </test-case> -->
+<!--       <test-case> -->
+<!--         <unique-id>assert-return-desktop-windows</unique-id> -->
+<!--         <input-message-provider> -->
+<!--           <metadata-provider class="empty-metadata-provider"/> -->
+<!--           <payload-provider class="inline-payload-provider"> -->
+<!--             <payload><![CDATA[<com.adaptris.kie.model.Person> -->
+<!--   <profession>manager</profession> -->
+<!--   <hobbies> -->
+<!--     <string>gaming</string> -->
+<!--   </hobbies> -->
+<!-- </com.adaptris.kie.model.Person>]]></payload> -->
+<!--           </payload-provider> -->
+<!--         </input-message-provider> -->
+<!--         <assertions> -->
+<!--           <assert-payload-equals> -->
+<!--             <payload><![CDATA[<desktop> -->
+<!--   <operating-system>Windows</operating-system> -->
+<!--   <ram>65536</ram> -->
+<!-- </desktop>]]></payload> -->
+<!--           </assert-payload-equals> -->
+<!--         </assertions> -->
+<!--       </test-case> -->
+<!--       <test-case> -->
+<!--         <unique-id>assert-return-desktop-linux</unique-id> -->
+<!--         <input-message-provider> -->
+<!--           <metadata-provider class="empty-metadata-provider"/> -->
+<!--           <payload-provider class="inline-payload-provider"> -->
+<!--             <payload><![CDATA[<com.adaptris.kie.model.Person> -->
+<!--   <profession>developer</profession> -->
+<!--   <hobbies> -->
+<!--     <string>gaming</string> -->
+<!--   </hobbies> -->
+<!-- </com.adaptris.kie.model.Person>]]></payload> -->
+<!--           </payload-provider> -->
+<!--         </input-message-provider> -->
+<!--         <assertions> -->
+<!--           <assert-payload-equals> -->
+<!--             <payload><![CDATA[<desktop> -->
+<!--   <operating-system>Linux</operating-system> -->
+<!--   <ram>65536</ram> -->
+<!-- </desktop>]]></payload> -->
+<!--           </assert-payload-equals> -->
+<!--         </assertions> -->
+<!--       </test-case> -->
+<!--       <test-case> -->
+<!--         <unique-id>assert-return-desktop-mac</unique-id> -->
+<!--         <input-message-provider> -->
+<!--           <metadata-provider class="empty-metadata-provider"/> -->
+<!--           <payload-provider class="inline-payload-provider"> -->
+<!--             <payload><![CDATA[<com.adaptris.kie.model.Person> -->
+<!--   <profession>hipster</profession> -->
+<!--   <hobbies> -->
+<!--     <string>gaming</string> -->
+<!--   </hobbies> -->
+<!-- </com.adaptris.kie.model.Person>]]></payload> -->
+<!--           </payload-provider> -->
+<!--         </input-message-provider> -->
+<!--         <assertions> -->
+<!--           <assert-payload-equals> -->
+<!--             <payload><![CDATA[<desktop> -->
+<!--   <operating-system>Mac</operating-system> -->
+<!--   <ram>65536</ram> -->
+<!-- </desktop>]]></payload> -->
+<!--           </assert-payload-equals> -->
+<!--         </assertions> -->
+<!--       </test-case> -->
+<!--       <service-to-test> -->
+<!--         <source class="file-source"> -->
+<!--           <file>file:///${service.tester.working.directory}/src/main/interlok/config/adapter.xml</file> -->
+<!--         </source> -->
+<!--         <preprocessors> -->
+<!--           <service-unique-id-preprocessor> -->
+<!--             <channel>kie-to-fs</channel> -->
+<!--             <workflow>kie-to-fs</workflow> -->
+<!--             <service>kie-service</service> -->
+<!--           </service-unique-id-preprocessor> -->
+<!--           <variable-substitution-preprocessor> -->
+<!--             <property-file>file:///${service.tester.working.directory}/src/main/interlok/config/variables.properties</property-file> -->
+<!--           </variable-substitution-preprocessor> -->
+<!--         </preprocessors> -->
+<!--       </service-to-test> -->
+<!--     </test> -->
+    <test>
+      <unique-id>aggregate-info@kie-to-fs</unique-id>
+      <test-case>
+        <unique-id>assert-aggregate-correct</unique-id>
+        <input-message-provider>
+          <metadata-provider class="inline-metadata-provider">
+            <metadata>
+              <key-value-pair>
+                <key>person</key>
+                <value>&lt;com.adaptris.kie.model.Person&gt;   &lt;profession&gt;hipster&lt;/profession&gt;   &lt;hobbies&gt;     &lt;string&gt;gaming&lt;/string&gt;   &lt;/hobbies&gt; &lt;/com.adaptris.kie.model.Person&gt;</value>
+              </key-value-pair>
+            </metadata>
+          </metadata-provider>
+          <payload-provider class="inline-payload-provider">
+            <payload><![CDATA[<desktop>
+  <operating-system>Mac</operating-system>
+  <ram>65536</ram>
+</desktop>]]></payload>
+          </payload-provider>
+        </input-message-provider>
+        <assertions>
+          <assert-payload-equals>
+            <payload><![CDATA[<info>
+<com.adaptris.kie.model.Person>   <profession>hipster</profession>   <hobbies>     <string>gaming</string>   </hobbies> </com.adaptris.kie.model.Person>
+<desktop>
+  <operating-system>Mac</operating-system>
+  <ram>65536</ram>
+</desktop>
+</info>]]></payload>
+          </assert-payload-equals>
+        </assertions>
+      </test-case>
+      <service-to-test>
+        <source class="file-source">
+          <file>file:///${service.tester.working.directory}/src/main/interlok/config/adapter.xml</file>
+        </source>
+        <preprocessors>
+          <service-unique-id-preprocessor>
+            <channel>kie-to-fs</channel>
+            <workflow>kie-to-fs</workflow>
+            <service>aggregate-info</service>
+          </service-unique-id-preprocessor>
+        </preprocessors>
+      </service-to-test>
+    </test>
+  </test-list>
+</service-test>

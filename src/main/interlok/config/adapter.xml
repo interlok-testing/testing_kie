@@ -1,0 +1,126 @@
+<adapter>
+  <unique-id>kie</unique-id>
+  <start-up-event-imp>com.adaptris.core.event.StandardAdapterStartUpEvent</start-up-event-imp>
+  <heartbeat-event-imp>com.adaptris.core.HeartbeatEvent</heartbeat-event-imp>
+  <shared-components>
+    <connections/>
+    <services/>
+  </shared-components>
+  <event-handler class="default-event-handler">
+    <unique-id>DefaultEventHandler</unique-id>
+    <connection class="null-connection">
+      <unique-id>dreamy-mayer</unique-id>
+    </connection>
+    <producer class="null-message-producer">
+      <unique-id>nostalgic-montalcini</unique-id>
+    </producer>
+  </event-handler>
+  <message-error-handler class="null-processing-exception-handler">
+    <unique-id>cranky-goldstine</unique-id>
+  </message-error-handler>
+  <failed-message-retrier class="no-retries">
+    <unique-id>romantic-poincare</unique-id>
+  </failed-message-retrier>
+  <channel-list>
+    <channel>
+      <consume-connection class="null-connection">
+        <unique-id>reverent-spence</unique-id>
+      </consume-connection>
+      <produce-connection class="null-connection">
+        <unique-id>drunk-pare</unique-id>
+      </produce-connection>
+      <workflow-list>
+        <standard-workflow>
+          <consumer class="polling-trigger">
+            <unique-id>furious-rosalind</unique-id>
+            <poller class="fixed-interval-poller">
+              <poll-interval>
+                <unit>SECONDS</unit>
+                <interval>10</interval>
+              </poll-interval>
+            </poller>
+          </consumer>
+          <service-collection class="service-list">
+            <unique-id>zen-shannon</unique-id>
+            <services>
+              <embedded-scripting-service>
+                <unique-id>create-person-message</unique-id>
+                <language>javascript</language>
+                <script>var professions = ["manager", "developer", "hipster"];
+var hobbies = ["travelling", "gaming"];
+
+var randomNumberP = Math.floor(Math.random() * 3);
+var randomNumberH = Math.floor(Math.random() * 2);
+
+var payload ="&lt;com.adaptris.kie.model.Person&gt;" +
+  "&lt;profession&gt;" + professions[randomNumberP] + "&lt;/profession&gt;" +
+  "&lt;hobbies&gt;" +
+  "  &lt;string&gt;" + hobbies[randomNumberH] + "&lt;/string&gt;" +
+  "&lt;/hobbies&gt;" +
+  "&lt;/com.adaptris.kie.model.Person&gt;";
+
+message.setContent(payload, 'UTF-8');
+</script>
+              </embedded-scripting-service>
+              <payload-to-metadata>
+                <unique-id>payload-to-metadata</unique-id>
+                <key>person</key>
+                <metadata-target>Standard</metadata-target>
+                <encoding>None</encoding>
+              </payload-to-metadata>
+              <kie-service>
+                <unique-id>kie-service</unique-id>
+                <connection class="kie-connection-with-rules">
+                  <unique-id>condescending-chandrasekhar</unique-id>
+                  <rule>${rulesDir}/choose-computer.drl</rule>
+                </connection>
+                <execution-context class="kie-simple-execution-context">
+                  <insert-id>payload</insert-id>
+                  <query-result-id>computer</query-result-id>
+                  <query-result-row-id>$c</query-result-row-id>
+                  <query-name>getComputerRecommendation</query-name>
+                </execution-context>
+                <session-management class="kie-per-message-session"/>
+              </kie-service>
+              <payload-from-template>
+                <unique-id>aggregate-info</unique-id>
+                <metadata-tokens/>
+                <template>&lt;info&gt;
+%message{person}
+%message{%payload}
+&lt;/info&gt;</template>
+              </payload-from-template>
+            </services>
+          </service-collection>
+          <producer class="fs-producer">
+            <unique-id>berserk-swanson</unique-id>
+            <create-dirs>true</create-dirs>
+            <fs-worker class="fs-nio-worker"/>
+            <filename-creator class="formatted-filename-creator">
+              <filename-format>%1$s</filename-format>
+            </filename-creator>
+            <base-directory-url>file://localhost/./messages/in</base-directory-url>
+          </producer>
+          <produce-exception-handler class="null-produce-exception-handler"/>
+          <unique-id>kie-to-fs</unique-id>
+          <message-metrics-interceptor>
+            <unique-id>kie-to-fs-MessageMetrics</unique-id>
+            <timeslice-duration>
+              <unit>MINUTES</unit>
+              <interval>5</interval>
+            </timeslice-duration>
+            <timeslice-history-count>12</timeslice-history-count>
+          </message-metrics-interceptor>
+          <in-flight-workflow-interceptor>
+            <unique-id>kie-to-fs-InFlight</unique-id>
+          </in-flight-workflow-interceptor>
+        </standard-workflow>
+      </workflow-list>
+      <unique-id>kie-to-fs</unique-id>
+    </channel>
+  </channel-list>
+  <message-error-digester class="standard-message-error-digester">
+    <unique-id>ErrorDigest</unique-id>
+    <digest-max-size>100</digest-max-size>
+  </message-error-digester>
+</adapter>

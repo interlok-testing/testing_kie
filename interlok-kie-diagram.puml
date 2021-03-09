@@ -1,0 +1,10 @@
+@startuml
+partition "Kie To FS" {
+  "Polling Trigger" -right-> "Create Person Payload" as CPP
+  CPP -right-> "Payload To Metadata" as PTM
+  PTM -right-> "Kie Service" as KS
+  KS -right-> "Aggregate Info" as AI
+  AI -right-> "FS Producer"
+}
+"FS Producer" -right-> "FS"
+@enduml
