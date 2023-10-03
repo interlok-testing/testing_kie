@@ -1,33 +1,25 @@
 plugins {
   id "java"
   id "distribution"
-  id 'com.github.spotbugs' version '4.6.2'
+  id 'com.github.spotbugs' version '5.1.3'
   // https://github.com/nemerosa/versioning
   id 'net.nemerosa.versioning' version '2.14.0'
 }
 
 ext {
-  interlokParentGradle = "https://raw.githubusercontent.com/adaptris-labs/interlok-build-parent/master/build.gradle"
-  interlokVersion = '4.0-SNAPSHOT'
+  interlokParentGradle = "https://raw.githubusercontent.com/adaptris/interlok-build-parent/main/v5/build.gradle"
+  interlokVersion = '5.0-SNAPSHOT'
   // Include the WAR file since by default it is excluded.
   includeWar='true'
   nexusBaseUrl  = 'https://nexus.adaptris.net'
   javadocsBaseUrl = "${nexusBaseUrl}/nexus/content/sites/javadocs/com/adaptris"
-  interlokJavadocs= project.hasProperty('interlokJavadocs') ? project.getProperty('interlokJavadocs') : javadocsBaseUrl + "/interlok-core/" + interlokVersion
-  interlokCommonJavadocs= project.hasProperty('interlokJavadocs') ? project.getProperty('interlokJavadocs') : javadocsBaseUrl + "/interlok-common/" + interlokVersion
+  interlokJavadocs= project.findProperty('interlokJavadocs') ?: javadocsBaseUrl + "/interlok-core/" + interlokVersion
+  interlokCommonJavadocs= project.findProperty('interlokCommonJavadocs') ?: javadocsBaseUrl + "/interlok-common/" + interlokVersion
   componentName='Interlok Application/KIE Models'
   componentDesc="KIE rules' models"
   organizationName = "Adaptris Ltd"
   organizationUrl = "http://interlok.adaptris.net"
-  slf4jVersion = '1.7.30'
-}
-
-if (JavaVersion.current().isJava8Compatible()) {
-  allprojects {
-    tasks.withType(Javadoc) {
-      options.addStringOption('Xdoclint:none', '-quiet')
-    }
-  }
+  slf4jVersion = '2.0.9'
 }
 
 allprojects {
@@ -36,28 +28,29 @@ allprojects {
   version=versioning.info.full
 }
 
-sourceCompatibility = 11
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 group   = 'com.adaptris'
 version = interlokVersion
 def versionDir = "$buildDir/version"
 
 configurations {
   javadoc {}
-  // patch interlokRuntime to extend runtime, so we only declare our dependencies once.
-  interlokRuntime.extendsFrom runtime
+  // patch interlokRuntime to extend implementation, so we only declare our dependencies once.
+  interlokRuntime.extendsFrom implementation
 }
 
 configurations.all {
   resolutionStrategy.cacheChangingModulesFor 0, "seconds"
 }
 
-
 dependencies {
-  compile ("com.adaptris:interlok-core:$interlokVersion") { changing= true}
-  compile ("com.adaptris:interlok-common:$interlokVersion") { changing= true}
-  compile ("com.adaptris:interlok-kie:$interlokVersion") { changing= true}
-  compile ("org.slf4j:slf4j-api:$slf4jVersion")
-  compile ("org.drools:drools-mvel:7.51.0.t20210303")
+  implementation ("com.adaptris:interlok-core:$interlokVersion") { changing= true}
+  implementation ("com.adaptris:interlok-common:$interlokVersion") { changing= true}
+  implementation ("com.adaptris:interlok-scripting:$interlokVersion") { changing= true}
+  implementation ("com.adaptris:interlok-kie:$interlokVersion") { changing= true}
+  implementation ("org.slf4j:slf4j-api:$slf4jVersion")
+  implementation ("org.drools:drools-mvel:7.73.0.Final")
   
   // This is to make sure that the annotation processors are enabled during the
   // compile phase.
@@ -68,7 +61,7 @@ dependencies {
   
   interlokJavadocs group: "com.adaptris", name: "interlok-kie", version: "$interlokVersion", classifier: "javadoc", changing: true, transitive: false
   
-  compile ("com.adaptris:interlok-service-tester:$interlokVersion") { changing=true }
+  implementation ("com.adaptris:interlok-service-tester:$interlokVersion") { changing=true }
   
   // Patch interlokRuntime to include the custom jar.
   interlokRuntime files(jar.archiveFile){
@@ -121,30 +114,26 @@ serviceTesterLauncherJar.configure {
 spotbugsMain {
   effort = "max"
   reportLevel = "high"
-  // showProgress = "true"
-  effort = "max"
-  // Ignore failures?
-  // ignoreFailures = false
   reports {
     xml {
-      enabled = false
+      required.set(false)
     }
     html {
-      enabled = true
+      required.set(true)
+      stylesheet = 'default.xsl'
     }
   }
-  // includeFilter = new File("$rootDir/gradle/spotbugs-filter.xml")
-  // excludeFilter = new File("$rootDir/gradle/spotbugs-exclude.xml")
 }
 
 dependencyCheck  {
   suppressionFiles= [ "https://raw.githubusercontent.com/adaptris/interlok/develop/gradle/owasp-exclude.xml" ]
-  skipConfigurations = [ "antSql", "spotbugs", "umlDoclet", "offlineJavadocPackages", "javadoc", "jacocoAnt", "jacocoAgent", "spotbugsPlugins", "spotbugsSlf4j" ]
+  scanConfigurations = [ "api", "compileClasspath", "runtimeClasspath" ]
   formats = [ "HTML", "JUNIT" ]
   junitFailOnCVSS = 7.0
   failBuildOnCVSS = 7.0
   analyzers {
     assemblyEnabled=false
+    knownExploitedURL=project.findProperty('dependencyCheckKnownExploitedURL')
   }
 }
 

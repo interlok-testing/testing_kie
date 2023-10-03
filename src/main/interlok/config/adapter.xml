@@ -101,7 +101,6 @@ message.setContent(payload, 'UTF-8');
             </filename-creator>
             <base-directory-url>file://localhost/./messages/in</base-directory-url>
           </producer>
-          <produce-exception-handler class="null-produce-exception-handler"/>
           <unique-id>kie-to-fs</unique-id>
           <message-metrics-interceptor>
             <unique-id>kie-to-fs-MessageMetrics</unique-id>

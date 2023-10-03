@@ -1,5 +1,8 @@
 # Kie Testing
 
+[![license](https://img.shields.io/github/license/interlok-testing/testing_kie.svg)](https://github.com/interlok-testing/testing_kie/blob/develop/LICENSE)
+[![Actions Status](https://github.com/interlok-testing/testing_kie/actions/workflows/gradle-build.yml/badge.svg)](https://github.com/interlok-testing/testing_kie/actions/workflows/gradle-build.yml)
+
 Project tests interlok-kie features
 
 ## What it does
@@ -8,7 +11,18 @@ This project is very simple and contains only one channel with one workflow.
 
 The workflow has a polling trigger that produces a message every 10 seconds and adds a Person payload (a marshalled version of the a Person model object, [see custom code below](#custom-code)), copies it to metadata, runs it trough a Kie service, aggregates the data and finally copies the message on the file system.
 
-![Kie Diagram](/interlok-kie-diagram.png "Kie Diagram")
+```mermaid
+graph LR
+  subgraph Kie To FS
+    direction LR
+    PT(Polling Trigger) --> CPP(Create Person Payload)
+    CPP --> PTM[Payload To Metadata]
+    PTM --> KS[Kie Service]
+    KS --> AI[Aggregate Info]
+    AI --> FSP[FS Producer]
+  end
+  FSP --> FS[FS]
+```
 
 ## Getting started
 
