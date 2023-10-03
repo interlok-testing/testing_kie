@@ -16,12 +16,12 @@ graph LR
   subgraph Kie To FS
     direction LR
     PT(Polling Trigger) --> CPP(Create Person Payload)
-    CPP --> PTM[Payload To Metadata]
-    PTM --> KS[Kie Service]
-    KS --> AI[Aggregate Info]
-    AI --> FSP[FS Producer]
+    CPP --> PTM(Payload To Metadata)
+    PTM --> KS(Kie Service)
+    KS --> AI(Aggregate Info)
+    AI --> FSP(FS Producer)
   end
-  FSP --> FS[FS]
+  FSP --> FS(FS)
 ```
 
 ## Getting started
