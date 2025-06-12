@@ -3,14 +3,17 @@ plugins {
   id "distribution"
   id 'com.github.spotbugs' version '5.1.3'
   // https://github.com/nemerosa/versioning
-  id 'net.nemerosa.versioning' version '2.14.0'
+  id 'net.nemerosa.versioning' version '3.1.0'
 }
 
 ext {
-  interlokParentGradle = "https://raw.githubusercontent.com/adaptris/interlok-build-parent/main/v5/build.gradle"
+//  interlokParentGradle = "https://raw.githubusercontent.com/adaptris/interlok-build-parent/main/v5/build.gradle"
   interlokVersion = '5.0-SNAPSHOT'
   // Include the WAR file since by default it is excluded.
   includeWar='true'
+  testingCommonGradle = "https://raw.githubusercontent.com/interlok-testing/testing_common/refs/heads/master/common.gradle"
+  //testingCommonGradle = "../interlok-testing-common/common.gradle"
+  interlokTestingVersion = "0.1"
   nexusBaseUrl  = 'https://nexus.adaptris.net'
   javadocsBaseUrl = "${nexusBaseUrl}/nexus/content/sites/javadocs/com/adaptris"
   interlokJavadocs= project.findProperty('interlokJavadocs') ?: javadocsBaseUrl + "/interlok-core/" + interlokVersion
@@ -23,7 +26,7 @@ ext {
 }
 
 allprojects {
-  apply from: "${interlokParentGradle}"
+  apply from: "${testingCommonGradle}"
   // specify the version of the configuration.
   version=versioning.info.full
 }
@@ -62,6 +65,8 @@ dependencies {
   interlokJavadocs group: "com.adaptris", name: "interlok-kie", version: "$interlokVersion", classifier: "javadoc", changing: true, transitive: false
   
   implementation ("com.adaptris:interlok-service-tester:$interlokVersion") { changing=true }
+
+  testImplementation group: "com.adaptris", name: "interlok-testing-common", version: "$interlokTestingVersion"
   
   // Patch interlokRuntime to include the custom jar.
   interlokRuntime files(jar.archiveFile){
