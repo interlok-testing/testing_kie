@@ -11,7 +11,7 @@ ext {
   interlokVersion = '5.0-SNAPSHOT'
   // Include the WAR file since by default it is excluded.
   includeWar='true'
-  testingCommonGradle = "https://raw.githubusercontent.com/interlok-testing/testing_common/refs/heads/master/common.gradle"
+  testingCommonGradle = "https://raw.githubusercontent.com/interlok-testing/testing_common/refs/heads/master/common.gradle?timestamp=${new Date().getTime()}"
   //testingCommonGradle = "../interlok-testing-common/common.gradle"
   interlokTestingVersion = "0.1"
   nexusBaseUrl  = 'https://nexus.adaptris.net'
